@@ -139,7 +139,7 @@ addLayer("goals", {
         32: {
             name: "Further Existence",
             done() { return player.a.avolve.gte(30) },
-            tooltip: "Reach Avolve Level 30. Reward: Avolve's boost to span style='font-size: 17.5px;'>a</span> is squared.",
+            tooltip: "Reach Avolve Level 30. Reward: Avolve's boost to <span style='font-size: 17.5px;'>a</span> is squared.",
             unlocked() { return hasAchievement("goals", 26) },
         },
         33: {
