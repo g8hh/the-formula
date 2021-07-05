@@ -3,7 +3,7 @@ let modInfo = {
 	id: "formula_tree_game",
 	author: "Jacorb90",
 	pointsName: "time",
-	modFiles: ["layers/a.js", "layers/b.js", "layers/goals.js", "tree.js"],
+	modFiles: ["layers/a.js", "layers/b.js", "layers/c.js", "layers/goals.js", "tree.js"],
 
 	discordName: "",
 	discordLink: "",
@@ -13,17 +13,33 @@ let modInfo = {
 
 function displayFormula() {
 	let f = "t"
-	if (player.b.unlocked) f = "t<sup>(b + 1)</sup>"
+	let expData = [player.b.unlocked, player.c.unlocked, hasAchievement("goals", 62)]
+	if (expData.some(x => x)) {
+		f += "<sup>";
+		if (expData[0]) {
+			let extraExp = "1"
+			if (expData[2]) extraExp = "log(a + 1) + 1"
+			f += "(b + "
+			if (expData[1]) f += formatWhole(tmp.c.coefficientInMainFormula)+" × c + "+extraExp+")"
+			else f += extraExp+")"
+		} else if (expData[1]) f += "(2 × c + "+(expData[2]?"log(a + 1) + 1":"1")+")"
+		else f = "(log(a + 1) + 1)"
+		f += "</sup>";
+	}
 
 	f += " × a";
+	if (hasAchievement("goals", 45) && tmp.b.batteriesUnl) f += " × B<sub>201</sub>";
 	if (hasAchievement("goals", 15)) f += " × Goals";
 	return f;
 }
 
 function calculateValue(t) {
-	if (player.b.unlocked) t = t.pow(player.b.value.plus(1))
+	let extraExp = hasAchievement("goals", 62)?player.a.value.plus(1).log10().plus(1):new Decimal(1)
+	let exp = (player.b.unlocked?player.b.value.plus(extraExp):extraExp).plus(player.c.unlocked?player.c.value.times(tmp.c.coefficientInMainFormula):0)
+	if (hasAchievement("goals", 62)||player.b.unlocked||player.c.unlocked) t = t.pow((player.b.unlocked||player.c.unlocked)?exp:extraExp)
 
 	let val = player.a.value.times(t);
+	if (hasAchievement("goals", 45) && tmp.b.batteriesUnl) val = val.times(gridEffect("b", 201));
 	if (hasAchievement("goals", 15)) val = val.times(tmp.goals.achsCompleted);
 	return val;
 }
@@ -34,11 +50,15 @@ function updateValue() {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.1",
-	name: "Learning Our Letters",
+	num: "0.1.1",
+	name: "More Letters, More Fun",
 }
 
 let changelog = `<h1>Changelog:</h1><br><br>
+	<h3>v0.1.1 - More Letters, More Fun</h3><br>
+		- Implemented C-Power & The Clock<br>
+		- Balanced up to 36 Goals completed<br><span style='opacity: 0'>Try looking in utils/easyAccess.js</span>
+	<br><br>
 	<h3>v0.1 - Learning Our Letters</h3><br>
 		- Set up basic stuff.<br>
 		- Implemented A-Power & Avolve<br>
@@ -50,7 +70,7 @@ let winText = `Congratulations! You have reached the end and beaten this game, b
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
-var doNotCallTheseFunctionsEveryTick = ["blowUpEverything"]
+var doNotCallTheseFunctionsEveryTick = ["blowUpEverything", "fullClockUpdate"]
 
 function getStartPoints(){
     return new Decimal(modInfo.initialStartPoints)
@@ -63,14 +83,25 @@ function canGenPoints(){
 
 function getTimeSpeed() {
 	let spd = new Decimal(1);
-	if (hasAchievement("goals", 36)) {
-		let p = player.points;
-		if (p.gte(50)) p = p.div(2).plus(25);
-		if (p.gte(65)) p = p.div(2).plus(32.5);
-		if (p.gte(75)) p = p.times(5625).cbrt();
-		spd = spd.times(Decimal.sub(5, p.max(10).sub(10).div(20)).max(1));
+	if (hasAchievement("goals", 36)) spd = spd.times(tmp.goals.goal36eff);
+	if (hasAchievement("goals", 53) && tmp.b.batteriesUnl) spd = spd.times(gridEffect("b", 302))
+	if (tmp.c.clockUnl) spd = spd.times(tmp.c.clockMult);
+	if (hasAchievement("goals", 66)) spd = spd.times(tmp.goals.achsCompleted)
+	else {
+		if (hasAchievement("goals", 62)) spd = spd.times(2);
+		if (hasAchievement("goals", 65)) spd = spd.times(2);
 	}
 	return spd;
+}
+
+function getTimeSpeedFormula() {
+	let f = ""
+	if (hasAchievement("goals", 36)) f = '"Definitely a Bee Joke"'
+	if (hasAchievement("goals", 53)) f += " × B<sub>302</sub>"
+	if (tmp.c.clockUnl) f += (f.length>0?" × ":"")+"Days Effect"
+	if (hasAchievement("goals", 66)) f += (f.length>0?" × ":"")+"Goals"
+	else if (hasAchievement("goals", 62)) f += (f.length>0?" × ":"")+(hasAchievement("goals", 65)?"4":"2")
+	return f;
 }
 
 // Calculate points/sec!
@@ -93,6 +124,10 @@ function addedPlayerData() { return {
 
 // Display extra things at the top of the page
 var displayThings = [
+	function() {
+		if (tmp.timeSpeed.eq(1)) return;
+		else return "timespeed = "+getTimeSpeedFormula();
+	}
 ]
 
 // Determines when the game "ends"

@@ -15,6 +15,26 @@ addLayer("goals", {
         "blank", "blank", "blank",
         "achievements",
     ],
+    goal36power() { 
+        let power = new Decimal(hasAchievement("goals", 42)?2:1);
+        if (hasAchievement("goals", 45) && tmp.b.batteriesUnl) power = power.times(gridEffect("b", 203));
+        if (hasAchievement("goals", 54)) power = power.times(3)
+        return power;
+    },
+    goal36decayrate() {
+        let rate = new Decimal(hasAchievement("goals", 42)?(1/4):1);
+        if (hasAchievement("goals", 54)) rate = rate.times(10)
+        return rate.times(tmp.goals.goal36power)
+    },
+    goal36eff() {
+        let pow = tmp.goals.goal36power
+		let decay = tmp.goals.goal36decayrate
+		let p = player.points.times(decay);
+		if (p.gte(50)) p = p.div(2).plus(25);
+		if (p.gte(65)) p = p.div(2).plus(32.5);
+		if (p.gte(75)) p = p.times(5625).cbrt();
+		return Decimal.sub(pow.times(5), p.max(10).sub(10).div(20)).max(1);
+    },
     achsCompleted() { return player[this.layer].achievements.length },
     unlocks() { return player[this.layer].buyables[11].toNumber() },
     buyables: {
@@ -33,6 +53,14 @@ addLayer("goals", {
                 {
                     desc: "Unlock Batteries",
                     req: 12,
+                },
+                {
+                    desc: "Unlock C-Power",
+                    req: 19,
+                },
+                {
+                    desc: "Unlock The Clock",
+                    req: 27,
                 },
             ],
             retrieveUnlockData() { return tmp[this.layer].buyables[11].unlockData[player[this.layer].buyables[11].toNumber()] },
@@ -161,16 +189,120 @@ addLayer("goals", {
             unlocked() { return hasAchievement("goals", 31) }
         },
         36: {
-            name: "I Could Make a Bee Joke, but I can't think of anything...",
+            name: "Definitely a Bee Joke",
             done() { return player.b.points.gte(10) },
-            tooltip: "Reach 10 B-Power. Reward: Time goes by 5x faster, but this slows down after 10 seconds.",
+            tooltip() { 
+                return "Reach 10 B-Power. Reward: Time goes by "+format(tmp.goals.goal36power.times(5))+"x faster, but this slows down after "+format(Decimal.div(10, tmp.goals.goal36decayrate))+" seconds.<br>Currently: "+format(tmp.goals.goal36eff)+"x" 
+            },
             unlocked() { return hasAchievement("goals", 31) },
         },
         41: {
             name: "The Sub-Infinite Sum",
             done() { return player.value.gte(1e40) && player.a.value.gte(6.98e8) },
-            tooltip: "Make n(t) ≥ 1e40 & a(A) ≥ 698,000,000. Reward: TBA ;)",
+            tooltip: "Make n(t) ≥ 1e40 & a(A) ≥ 698,000,000. Reward: The A-Power requirement base is decreased by 0.05.",
             unlocked() { return hasAchievement("goals", 34) }
+        },
+        42: {
+            name: "Cue That Bee Movie Reference",
+            done() { return player.b.points.gte(15) },
+            tooltip: 'Reach 15 B-Power. Reward: The reward of "Definitely a Bee Joke" is twice as strong & takes 4x as long to decay.',
+            unlocked() { return hasAchievement("goals", 36) },
+        },
+        43: {
+            name: "Chargeless",
+            done() { return player.value.gte(1e75) && tmp.b.usedBatteries==0 },
+            tooltip: "Make n(t) ≥ 1e75 without any Used Batteries. Reward: You can have 1 more active battery at a time.",
+            unlocked() { return hasAchievement("goals", 35) && hasAchievement("goals", 36) && tmp[this.layer].unlocks>=3 },
+        },
+        44: {
+            name: "I Feel Like Gambling",
+            done() { return player.a.points.gte(888) },
+            tooltip: "Reach 888 A-Power. Reward: B-Power's boost to effective A-Power multiplies instead of adding.",
+            unlocked() { return hasAchievement("goals", 41) },
+        },
+        45: {
+            name: "If only Googology was a Feature...",
+            done() { return player.value.gte(1e100) },
+            tooltip: "Make n(t) ≥ 1e100. Reward: The second row of Batteries have their own rewards.",
+            unlocked() { return hasAchievement("goals", 43) },
+        },
+        46: {
+            name: "Ah I see",
+            done() { return player.c.points.gte(4) },
+            tooltip: "Reach 4 C-Power. Reward: Triple <span style='font-size: 17.5px;'>c</span>'s coefficient in n(t).",
+            unlocked() { return hasAchievement("goals", 44) && tmp[this.layer].unlocks>=4 },
+        },
+        51: {
+            name: "This is STILL USELESS",
+            done() { return tmp.a.bars.Avolve.reqDiv.gte(3e5) },
+            tooltip: "Divide the Avolve requirement by 300,000. Reward: The Avolve requirement reduction upgrade's effect exponent is increased by your completed Goals.",
+            unlocked() { return hasAchievement("goals", 24) && hasAchievement("goals", 36) },
+        },
+        52: {
+            name: "Woah that's a lotta Damage!",
+            done() { return player.a.points.gte(2e3) },
+            tooltip: "Reach 2,000 A-Power. Reward: You can automatically gain A-Power, and decrease its requirement base by 0.05.",
+            unlocked() { return hasAchievement("goals", 44) }
+        },
+        53: {
+            name: "20% to Absolution",
+            done() { return player.value.gte(Math.pow(Number.MAX_VALUE, 0.8)) },
+            tooltip() { return "Make n(t) ≥ "+format(Math.pow(Number.MAX_VALUE, 0.8))+". Reward: You can have 1 more active Battery at a time, and third row Batteries have their own rewards." },
+            unlocked() { return hasAchievement("goals", 45) },
+        },
+        54: {
+            name: "Insani-B",
+            done() { return player.a.value.gte(1.5e17) },
+            tooltip: 'Make a(A) ≥ 1.5e17. Reward: Avolve requirement scaling starts 25 levels later, and the reward of "Definitely a Bee Joke" is 3x as strong, but decays 10x faster.',
+            unlocked() { return hasAchievement("goals", 42) && hasAchievement("goals", 51) },
+        },
+        55: {
+            name: "Buzz Lightyear was a Visionary",
+            done() { return player.value.gte(Number.MAX_VALUE) },
+            tooltip: "Make n(t) ≥ "+format(Number.MAX_VALUE)+".",
+            unlocked() { return hasAchievement("goals", 53) },
+        },
+        56: {
+            name: "The True Day",
+            done() { return tmp.c.clockRatio.times(tmp.c.hoursPerDay).gte(24) },
+            tooltip: "Get The Clock to display at least 24:00:00. Reward: The length of 1 Day is halved.",
+            unlocked() { return hasAchievement("goals", 54) && tmp.goals.unlocks>=5}
+        },
+        61: {
+            name: "Out of Order?",
+            done() { return player.b.points.gte(30) && player.c.points.gte(7) },
+            tooltip: 'Reach 30 B-Power & 7 C-Power. Reward: Increase the effect of Days Passed by 0.1 for every Day Passed (does not decay over time).',
+            unlocked() { return hasAchievement("goals", 52) && tmp.goals.unlocks>=5}
+        },
+        62: {
+            name: "Going back for that other Goal?",
+            done() { return player.a.avolve.gte(308) },
+            tooltip: "Reach Avolve Level 308. Reward: Time goes by twice as fast, and the log of <span style='font-size: 17.5px;'>a</span> adds to <span style='font-size: 17.5px;'>t</span>'s exponent in n(t).",
+            unlocked() { return hasAchievement("goals", 61) },
+        },
+        63: {
+            name: "Solar Clocks",
+            done() { return layers.c.clockRatio().times(tmp.c.hoursPerDay).gte(2) && tmp.b.usedBatteries==0 },
+            tooltip: "Get The Clock to display at least 2:00:00 without any Active Batteries. Reward: The length of 1 Day is halved, Days Passed do not decay, and when a Day Passes, The Clock does not reset.",
+            unlocked() { return hasAchievement("goals", 56) },
+        },
+        64: {
+            name: "Canadian Eh?",
+            done() { return player.a.points.gte(105e3) },
+            tooltip: "Reach 105,000 A-Power. Reward: <span style='font-size: 17.5px;'>c</span> adds to b(B).",
+            unlocked() { return hasAchievement("goals", 62) && tmp.goals.unlocks>=4 },
+        },
+        65: {
+            name: "I guess this isn't useless now...",
+            done() { return tmp.a.bars.Avolve.reqDiv.gte(1e55) },
+            tooltip: "Divide the Avolve requirement by 1e55. Reward: The Avolve requirement reduction upgrade's effect exponent is increased by its level, A-Power boosts a(A) with a stronger function, and double Timespeed.",
+            unlocked() { return hasAchievement("goals", 56) && hasAchievement("goals", 62) },
+        },
+        66: {
+            name: "The True Year",
+            done() { return tmp.c.clockRatio.times(tmp.c.hoursPerDay).gte(8765.76) },
+            tooltip: "Get The Clock to display at least 8,765:45:36. Reward: Goals multiply Timespeed, but divide Timespeed by 4. Also, there's another reward, but you'll have to wait for the next update for it ;) <span style='opacity: 0'>(and there's definitely nothing hidden in the changelog so don't look there)</span>",
+            unlocked() { return hasAchievement("goals", 56)}
         },
     },
     nodeStyle: { width: "50px", height: "50px", "min-width": "50px" },

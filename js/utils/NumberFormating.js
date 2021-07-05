@@ -72,11 +72,12 @@ function format(decimal, precision = 2, small) {
 
 }
 
-function formatWhole(decimal) {
+function formatWhole(decimal, ez=false) {
     decimal = new Decimal(decimal)
     if (decimal.gte(1e9)) return format(decimal, 2)
     if (decimal.lte(0.99) && !decimal.eq(0)) return format(decimal, 2)
-    return format(decimal, 0)
+    let f = format(decimal, 0)
+    return ((ez&&f.length<2)?("0".repeat(2-f.length)):"")+f
 }
 
 function formatTime(s) {

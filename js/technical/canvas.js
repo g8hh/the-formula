@@ -6,7 +6,7 @@ window.addEventListener("resize", (_=>resizeCanvas()));
 function retrieveCanvasData() {
 	let treeCanv = document.getElementById("treeCanvas")
 	let treeTab = document.getElementById("treeTab")
-	if (treeCanv===undefined||treeCanv===null) return false;
+	if (treeCanv===undefined||treeTab===null) return false;
 	canvas = treeCanv;
 	ctx = canvas.getContext("2d");
 	return true;
@@ -18,7 +18,7 @@ function resizeCanvas() {
     canvas.height = 0;
 	canvas.width  = window.innerWidth;
 	canvas.height = window.innerHeight;
-		drawTree();
+	drawTree();
 }
 
 
