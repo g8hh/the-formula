@@ -19,11 +19,13 @@ addLayer("goals", {
         let power = new Decimal(hasAchievement("goals", 42)?2:1);
         if (hasAchievement("goals", 45) && tmp.b.batteriesUnl) power = power.times(gridEffect("b", 203));
         if (hasAchievement("goals", 54)) power = power.times(3)
+        if (hasAchievement("goals", 71)) power = power.times(3.6)
         return power;
     },
     goal36decayrate() {
         let rate = new Decimal(hasAchievement("goals", 42)?(1/4):1);
         if (hasAchievement("goals", 54)) rate = rate.times(10)
+        if (hasAchievement("goals", 71)) rate = rate.times(2)
         return rate.times(tmp.goals.goal36power)
     },
     goal36eff() {
@@ -61,6 +63,10 @@ addLayer("goals", {
                 {
                     desc: "Unlock The Clock",
                     req: 27,
+                },
+                {
+                    desc: "Unlock Integration",
+                    req: 37,
                 },
             ],
             retrieveUnlockData() { return tmp[this.layer].buyables[11].unlockData[player[this.layer].buyables[11].toNumber()] },
@@ -301,8 +307,74 @@ addLayer("goals", {
         66: {
             name: "The True Year",
             done() { return tmp.c.clockRatio.times(tmp.c.hoursPerDay).gte(8765.76) },
-            tooltip: "Get The Clock to display at least 8,765:45:36. Reward: Goals multiply Timespeed, but divide Timespeed by 4. Also, there's another reward, but you'll have to wait for the next update for it ;) <span style='opacity: 0'>(and there's definitely nothing hidden in the changelog so don't look there)</span>",
+            tooltip: "Get The Clock to display at least 8,765:45:36. Reward: Goals multiply Timespeed, but divide Timespeed by 4. Also, the length of 1 Day is halved again.",
             unlocked() { return hasAchievement("goals", 56)}
+        },
+        71: {
+            name: "The Leetest Function",
+            done() { return player.value.gte("1e1337") },
+            tooltip: "Make n(t) ≥ "+format("1e1337")+'. Reward: The reward of "Definitely a Bee Joke" is 3.6x as strong but decays twice as fast.',
+            unlocked() { return hasAchievement("goals", 55) && hasAchievement("goals", 64) },
+        },
+        72: {
+            name: "New Society",
+            done() { return player.int.value.gte(8) },
+            tooltip: "Reach 8 IP. Reward: IP multiplies Time Speed.",
+            unlocked() { return hasAchievement("goals", 61) && player.int.unlocked },
+        },
+        73: {
+            name: "The Useless Quality of Life",
+            done() { return tmp.a.bars.Avolve.reqDiv.gte(1e100) },
+            tooltip: "Divide the Avolve requirement by 1e100. Reward: The Avolve requirement reduction upgrade can be automated and bought in bulk. Also, its effect exponent is increased by your IP.",
+            unlocked() { return hasAchievement("goals", 65) && player.int.unlocked },
+        },
+        74: {
+            name: "Intense Absolution",
+            done() { return player.int.points.gte(2) },
+            tooltip: "Reach 2 Integrations. Reward: You can buy max B-Power, and the B-Power requirement exponent increase is 20% weaker.",
+            unlocked() { return hasAchievement("goals", 71) && player.int.unlocked },
+        },
+        75: {
+            name: "Cue That Sea Movie Reference",
+            done() { return player.c.points.gte(15) },
+            tooltip: "Reach 15 C-Power. Reward: Days can be gotten in bulk, and the length of a Day is divided by your Integrations.",
+            unlocked() { return hasAchievement("goals", 66) && player.int.unlocked },
+        }, 
+        76: {
+            name: "A Salt and Battery",
+            done() { return gridEffect("b", 102).gte(4795) },
+            tooltip: "Get B<sub>102</sub>'s effect to at least 4,795. Reward: You can use 3 more Batteries at a time, and square the leftmost column of Batteries.",
+            unlocked() { return hasAchievement("goals", 72) },
+        },
+        81: {
+            name: "How Nice of You!",
+            done() { return player.b.value.gte(69) },
+            tooltip: "Make b(B) ≥ 69. Reward: Scaled Avolve Level scaling is 50% weaker, IP adds to b, and each Day passed increases its effect by 0.25%.",
+            unlocked() { return hasAchievement("goals", 73) },
+        },
+        82: {
+            name: "Out of Order II",
+            done() { return player.value.gte("1e3000") },
+            tooltip: 'Make n(t) ≥ 1e3000. Reward: C-Power requirement scaling starts 1 later for each Goal in this row, and Avolve levels can be gotten in bulk.',
+            unlocked() { return hasAchievement("goals", 55) && hasAchievement("goals", 64) },
+        },
+        83: {
+            name: "Is this Infinity?",
+            done() { return player.int.value.gte(27.5) },
+            tooltip: "Reach 27.5 IP. Reward: Integrations multiply b.",
+            unlocked() { return hasAchievement("goals", 72) },
+        },
+        84: {
+            name: "Nice Goal #420",
+            done() { return player.value.gte("1e6969") },
+            tooltip: "Make n(t) ≥ 1e6969. Reward: Double the bottom row of Batteries.",
+            unlocked() { return hasAchievement("goals", 76) },
+        },
+        85: {
+            name: "Live Life to the Fullest I Guess?",
+            done() { return tmp.c.clockRatio.times(tmp.c.hoursPerDay).gte(1e9) },
+            tooltip: "Get The Clock to display at least 1e9:00:00. Reward: Wait for the next update ;)",
+            unlocked() { return hasAchievement("goals", 81) },
         },
     },
     nodeStyle: { width: "50px", height: "50px", "min-width": "50px" },
@@ -311,7 +383,7 @@ addLayer("goals", {
             "border-radius": "5%",
         },
         buyable: {
-            width: "100px",
+            "min-width": "100px",
             height: "75px",
             "border-radius": "5%",
         },

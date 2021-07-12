@@ -95,7 +95,13 @@ addLayer("a", {
     },
     update(diff) {
         player[this.layer].value = tmp[this.layer].calculateValue
-        if (tmp[this.layer].bars.Avolve.unlocked && tmp[this.layer].bars.Avolve.progress>=1) player[this.layer].avolve = player[this.layer].avolve.plus(1);
+        if (tmp[this.layer].bars.Avolve.unlocked) {
+            if (tmp[this.layer].bars.Avolve.progress>=1) {
+                if (hasAchievement("goals", 82)) player[this.layer].avolve = player[this.layer].avolve.max(tmp[this.layer].bars.Avolve.target)
+                else player[this.layer].avolve = player[this.layer].avolve.plus(1);
+            }
+            if (hasAchievement("goals", 73) && player.a.autoAvolve) layers[this.layer].buyables[11].buyMax()
+        }
     },
     bars: {
         Avolve: {
@@ -110,7 +116,11 @@ addLayer("a", {
                         if (hasAchievement("goals", 54)) start = start.plus(25);
                         return start;
                     },
-                    pow: new Decimal(2),
+                    pow() { 
+                        let pow = new Decimal(2)
+                        if (hasAchievement("goals", 81)) pow = pow.sqrt();
+                        return pow;
+                    },
                 },
             ],
             scalingName() {
@@ -136,6 +146,14 @@ addLayer("a", {
                 }
                 return Decimal.pow(5, x.plus(1)).times(10).div(tmp[this.layer].bars.Avolve.reqDiv) 
             },
+            target() {
+                let x = player.value.times(tmp[this.layer].bars.Avolve.reqDiv).div(10).max(1).log(5).sub(1);
+                for (let i=tmp.a.bars.Avolve.scalings.length-1;i>=0;i--) {
+                    let data = tmp.a.bars.Avolve.scalings[i]
+                    if (x.gte(data.start)) x = x.times(data.start.pow(data.pow.sub(1))).root(data.pow)
+                }
+                return x.plus(1).floor().max(0);
+            },
             progress() { return player.value.div(tmp[this.layer].bars.Avolve.req) },
             unlocked() { return tmp.goals.unlocks>=1 },
             display() { return "Req: n(t) ≥ "+formatWhole(tmp[this.layer].bars.Avolve.req)+" ("+format(100-tmp[this.layer].bars.Avolve.progress)+"%)" },
@@ -153,6 +171,7 @@ addLayer("a", {
                 if (hasAchievement("goals", 24)) exp = exp.plus(1);
                 if (hasAchievement("goals", 51)) exp = exp.plus(tmp.goals.achsCompleted);
                 if (hasAchievement("goals", 65)) exp = exp.plus(player[this.layer].buyables[this.id]);
+                if (hasAchievement("goals", 73)) exp = exp.plus(player.int.value);
                 return exp;
             },
             effect() { 
@@ -161,11 +180,19 @@ addLayer("a", {
                 return eff;
             },
             cost(x=player[this.layer].buyables[this.id]) { return Decimal.pow(1.5, x).times(5).plus(10).ceil() },
+            target(r=player[this.layer].points) { return r.sub(10).div(5).max(1).log(1.5).plus(1).floor() },
             display() { return "Level: "+formatWhole(player[this.layer].buyables[this.id])+"<br>Cost: "+formatWhole(tmp[this.layer].buyables[this.id].cost)+" A-Power" },
             canAfford() { return player[this.layer].points.gte(layers[this.layer].buyables[this.id].cost()) },
             buy() { 
+                if (hasAchievement("goals", 73)) {
+                    layers[this.layer].buyables[this.id].buyMax();
+                    return;
+                }
                 player[this.layer].points = player[this.layer].points.sub(tmp[this.layer].buyables[this.id].cost).max(0)
                 player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].plus(1);
+            },
+            buyMax() {
+                player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].max(tmp[this.layer].buyables[this.id].target)
             },
             unlocked() { return tmp[this.layer].bars.Avolve.unlocked },
         },  
@@ -176,6 +203,12 @@ addLayer("a", {
             unlocked() { return hasAchievement("goals", 52) },
             done() { return hasAchievement("goals", 52) },
             toggles: [["a", "auto"]]
+        },
+        1: {
+            effectDescription: "Automate the Avolve Upgrade",
+            unlocked() { return hasAchievement("goals", 73) },
+            done() { return hasAchievement("goals", 73) },
+            toggles: [["a", "autoAvolve"]],
         },
     },
     tabFormat: [

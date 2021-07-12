@@ -29,8 +29,8 @@ addLayer("b", {
         return new Decimal(exp);
     },
     costScalingStart: new Decimal(15),
-    costScalingInc: new Decimal(.05),
-    canBuyMax() { return false },
+    costScalingInc() { return new Decimal(hasAchievement("goals", 74)?.04:.05) },
+    canBuyMax() { return hasAchievement("goals", 74) },
     autoPrestige() { return false },
     resetsNothing() { return false },
     tooltipLocked() { return "Req: n(t) ≥ "+formatWhole(tmp[this.layer].requires) },
@@ -73,13 +73,18 @@ addLayer("b", {
         "grid",
     ],
     displayFormula() {
-        let f = "B";
+        let brackets = hasAchievement("goals", 83)
+        let f = (brackets?"(":"")+"B";
         if (hasAchievement("goals", 64)) f += " + c"
+        if (hasAchievement("goals", 81)) f += " + IP"
+        if (brackets) f += ") × I"
         return f;
     },
     calculateValue(B=player[this.layer].points) {
         let val = B;
         if (hasAchievement("goals", 64)) val = val.plus(player.c.value);
+        if (hasAchievement("goals", 81)) val = val.plus(player.int.value);
+        if (hasAchievement("goals", 83)) val = val.times(player.int.points.max(1));
         return val;
     },
     update(diff) {
@@ -103,6 +108,7 @@ addLayer("b", {
         let limit = hasAchievement("goals", 34)?4:2 
         if (hasAchievement("goals", 43)) limit++;
         if (hasAchievement("goals", 53)) limit++;
+        if (hasAchievement("goals", 76)) limit += 3;
         return limit;
     },
     usedBatteries() { return Object.values(player[this.layer].grid).filter(x => x.gt(0)).length },
@@ -142,6 +148,8 @@ addLayer("b", {
             let x = data.times(player[this.layer].points);
             let rt = row*col/2;
             let eff = x.plus(1).root(rt).times(mult);
+            if (col==1 && hasAchievement("goals", 76)) eff = eff.pow(2);
+            if (row==3 && hasAchievement("goals", 84)) eff = eff.times(2);
             return eff;
         },
         getCanClick(data, id) { return (layers[this.layer].usedBatteries()<tmp[this.layer].batteryLimit)||data.gt(0) },
@@ -160,4 +168,8 @@ addLayer("b", {
             "border-radius": "5%",
         },
     },
+    doReset(resettingLayer) {
+        let keep = ["grid"]
+        if (layers[resettingLayer].row > tmp[this.layer].row) layerDataReset(this.layer, keep)
+    }
 })

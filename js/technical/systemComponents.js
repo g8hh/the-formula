@@ -113,7 +113,8 @@ var systemComponents = {
 		</span>
 		<br>
 		<h2 class="overlayThing" id="points">n({{format(player.points)}}{{tmp.timeSpeed.gt(1)?(" × "+format(tmp.timeSpeed)):""}}) = {{format(player.value)}}</h2><br>
-		<span class="overlayThing" style="font-size: 20px;">n(t) = <span v-html="displayFormula()"></span></span>
+		<span class="overlayThing" style="font-size: 18px;" v-if="player.int.unlocked && player.int.value.gt(0)">n(t) = <span v-html="displayIntFormula()"></span></span>
+		<span class="overlayThing" style="font-size: 20px;" v-if="!(player.int.unlocked && player.int.value.gt(0))">n(t) = <span v-html="displayFormula()"></span></span>
 		<br>
 		<div v-for="thing in tmp.displayThings" class="overlayThing"><span v-if="thing" v-html="thing"></span></div>
 	</div>
