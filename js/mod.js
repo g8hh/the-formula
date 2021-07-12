@@ -93,7 +93,7 @@ let VERSION = {
 let changelog = `<h1>Changelog:</h1><br><br>
 	<h3>v0.1.2 - Integrate and Weep</h3><br>
 		- Implemented Integration<br>
-		- Balanced up to ??? Goals completed<br>
+		- Balanced up to 47 Goals completed<br>
 	<br><br>
 	<h3>v0.1.1 - More Letters, More Fun</h3><br>
 		- Implemented C-Power & The Clock<br>
