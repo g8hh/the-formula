@@ -222,6 +222,7 @@ var cnExcludePostfix = [
 var cnRegReplace = new Map([
     [/^You have (.+) points$/, '你有 $1 点数'],
     [/^Next at (.+) points$/, '下一个在 $1 点数'],
+	[/^([\d\.]+) Goals completed$/, '$1 目标已完成'],
 	[/^([\d\.]+)\/sec$/, '$1\/秒'],
     [/^requires ([\d\.]+) more research points$/, '需要$1个研究点'],
     [/^(\d+) Royal points$/, '$1 皇家点数'],
