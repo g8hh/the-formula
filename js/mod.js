@@ -1,5 +1,5 @@
 let modInfo = {
-	name: "The Formula(公式树)",
+	name: "公式树 - The Formula",
 	id: "formula_tree_game",
 	author: "Jacorb90 汉化by QwQe308",
 	pointsName: "时间",
