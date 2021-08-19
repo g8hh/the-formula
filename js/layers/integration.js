@@ -10,21 +10,21 @@ addLayer("int", {
     }},
     nodeStyle() { return { "min-width": "200px", height: "200px", "font-size": "180px", "padding-left": "15px", "padding-right": "15px", "background-color": (colors[options.theme || "default"].background), "border-color": (colors[options.theme || "default"].background), color: (((tmp.timeSpeed||new Decimal(1)).gte(tmp[this.layer].requires)||player[this.layer].unlocked)?"white":"#8a2203"), "box-shadow": "none" }},
     color: "#8a8a8a",
-    resource: "Integrations",
-    baseResource: "Time Speed",
+    resource: "集合",
+    baseResource: "时间速率",
     baseAmount() { return tmp.timeSpeed||new Decimal(1) },
     type: "static",
     requires: new Decimal(1e7),
     base: new Decimal(10),
     exponent: new Decimal(1),
     layerShown() { return tmp.goals.unlocks>=6 },
-    tooltipLocked() { return "Req: Time Speed ≥ "+formatWhole(tmp[this.layer].requires)+"x" },
+    tooltipLocked() { return "要求: 时间速率 ≥ "+formatWhole(tmp[this.layer].requires)+"x" },
     prestigeButtonText() {
-        if (!player[this.layer].unlocked) return "Reset all previous variables to enter the realm of Integration"
-        let text = "Reset for <b>"+formatWhole(tmp[this.layer].resetGain)+"</b> Integrations<br><br>";
-        if (tmp[this.layer].canBuyMax) text += "Next: Time Speed ≥ "+format(tmp[this.layer].nextAtDisp)+"x"
-        else text += "Req: Time Speed ≥ "+format(tmp[this.layer].nextAt)+"x"
-        text += "<br>Req Base: "+format(tmp[this.layer].base)
+        if (!player[this.layer].unlocked) return "重置所有之前的进度来进入集合的王国"
+        let text = "重置以获得 <b>"+formatWhole(tmp[this.layer].resetGain)+"</b> 集合<br><br>";
+        if (tmp[this.layer].canBuyMax) text += "下一个集合需要: 时间速率 ≥ "+format(tmp[this.layer].nextAtDisp)+"x"
+        else text += "需求: 时间速率 ≥ "+format(tmp[this.layer].nextAt)+"x"
+        text += "<br>需求底数: "+format(tmp[this.layer].base)
         return text;
     },
     tabFormat: [
