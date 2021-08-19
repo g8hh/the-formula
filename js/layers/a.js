@@ -11,7 +11,7 @@ addLayer("a", {
     milestonePopups: false,
     nodeStyle: { "min-width": "60px", height: "60px", "font-size": "30px", "padding-left": "15px", "padding-right": "15px" },
     color: "#eb3434",
-    resource: "A-Power", 
+    resource: "A能量", 
     baseResource: "n", 
     baseAmount() {return player.value}, 
     type: "custom",
@@ -50,15 +50,15 @@ addLayer("a", {
         return Decimal.pow(tmp[this.layer].base, amt.div(tmp[this.layer].gainMult)).sub(1).plus(tmp[this.layer].requires).div(tmp[this.layer].reqDiv)
     },
     prestigeButtonText() {
-        let text = (tmp[this.layer].resetsNothing?"Gain ":"Reset for ")+"<b>"+formatWhole(tmp[this.layer].resetGain)+"</b> A-Power<br><br>";
-        if (tmp[this.layer].canBuyMax) text += "Next: n(t) ≥ "+format(tmp[this.layer].nextAtDisp)
-        else text += "Req: n(t) ≥ "+format(tmp[this.layer].getNextAt)
-        text += "<br>Req Base: "+format(tmp[this.layer].base)
+        let text = (tmp[this.layer].resetsNothing?"获得 ":"重置以获得 ")+"<b>"+formatWhole(tmp[this.layer].resetGain)+"</b> A能量<br><br>";
+        if (tmp[this.layer].canBuyMax) text += "下一个A能量需要: n(t) ≥ "+format(tmp[this.layer].nextAtDisp)
+        else text += "需求: n(t) ≥ "+format(tmp[this.layer].getNextAt)
+        text += "<br>需求底数: "+format(tmp[this.layer].base)
         return text;
     },
     row: 0, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
-        {key: "a", description: "A: Reset for A-Power", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+        {key: "a", description: "A: 重置以获得A能量", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
     layerShown(){return true},
     displayFormula() {
@@ -68,12 +68,12 @@ addLayer("a", {
             else f = "("+f+" + "+(tmp.b.batteriesUnl?("(B × B<sub>102</sub>)"):"B")+")"
         }
         if (tmp[this.layer].bars.Avolve.unlocked) {
-            f += " × (Avolve + 1)"
+            f += " × (进化 + 1)"
             if (hasAchievement("goals", 32)) f += "<sup>2</sup>"
         }
         if (hasAchievement("goals", 23)) f += " × (b ÷ 4 + 1)"
         if (hasAchievement("goals", 45) && tmp.b.batteriesUnl) f += " × B<sub>202</sub>";
-        if (hasAchievement("goals", 33)) f += " × Goals"
+        if (hasAchievement("goals", 33)) f += " × 成就"
         if (hasAchievement("goals", 13) && !hasAchievement("goals", 33)) f += " + 0.5";
         return f;
     }, 
@@ -110,7 +110,7 @@ addLayer("a", {
             height: 40,
             scalings: [
                 {
-                    title: "Scaled",
+                    title: "折算",
                     start() {
                         let start = new Decimal(100)
                         if (hasAchievement("goals", 54)) start = start.plus(25);
@@ -156,7 +156,7 @@ addLayer("a", {
             },
             progress() { return player.value.div(tmp[this.layer].bars.Avolve.req) },
             unlocked() { return tmp.goals.unlocks>=1 },
-            display() { return "Req: n(t) ≥ "+formatWhole(tmp[this.layer].bars.Avolve.req)+" ("+format(100-tmp[this.layer].bars.Avolve.progress)+"%)" },
+            display() { return "要求: n(t) ≥ "+formatWhole(tmp[this.layer].bars.Avolve.req)+" ("+format(100-tmp[this.layer].bars.Avolve.progress)+"%)" },
             fillStyle: {"background-color": "#ba2323"},
         },
     },
@@ -164,7 +164,7 @@ addLayer("a", {
         rows: 1,
         cols: 1,
         11: {
-            title() { return "Avolve Requirement<br>÷"+format(tmp[this.layer].buyables[this.id].effect) },
+            title() { return "进化要求<br>÷"+format(tmp[this.layer].buyables[this.id].effect) },
             effExp() {
                 let exp = new Decimal(1);
                 if (hasAchievement("goals", 16)) exp = exp.plus(1);
@@ -181,7 +181,7 @@ addLayer("a", {
             },
             cost(x=player[this.layer].buyables[this.id]) { return Decimal.pow(1.5, x).times(5).plus(10).ceil() },
             target(r=player[this.layer].points) { return r.sub(10).div(5).max(1).log(1.5).plus(1).floor() },
-            display() { return "Level: "+formatWhole(player[this.layer].buyables[this.id])+"<br>Cost: "+formatWhole(tmp[this.layer].buyables[this.id].cost)+" A-Power" },
+            display() { return "等级: "+formatWhole(player[this.layer].buyables[this.id])+"<br>价格: "+formatWhole(tmp[this.layer].buyables[this.id].cost)+" A能量" },
             canAfford() { return player[this.layer].points.gte(layers[this.layer].buyables[this.id].cost()) },
             buy() { 
                 if (hasAchievement("goals", 73)) {
@@ -199,13 +199,13 @@ addLayer("a", {
     },
     milestones: {
         0: {
-            effectDescription: "Automate A-Power.",
+            effectDescription: "自动获取A能量.",
             unlocked() { return hasAchievement("goals", 52) },
             done() { return hasAchievement("goals", 52) },
             toggles: [["a", "auto"]]
         },
         1: {
-            effectDescription: "Automate the Avolve Upgrade",
+            effectDescription: "自动降低进化要求",
             unlocked() { return hasAchievement("goals", 73) },
             done() { return hasAchievement("goals", 73) },
             toggles: [["a", "autoAvolve"]],
@@ -219,7 +219,7 @@ addLayer("a", {
         ["display-text", function() { return "<h3>a("+formatWhole(player[this.layer].points)+") = "+format(player[this.layer].value)+"</h3>" }],
         ["display-text", function() { return "a(A) = "+tmp[this.layer].displayFormula }],
         "blank", "blank",
-        ["display-text", function() { return tmp[this.layer].bars.Avolve.unlocked?("<h4>"+tmp.a.bars.Avolve.scalingName+"Avolve Level: "+formatWhole(player[this.layer].avolve)+"</h4>"):"" }],
+        ["display-text", function() { return tmp[this.layer].bars.Avolve.unlocked?("<h4>"+tmp.a.bars.Avolve.scalingName+"进化级别: "+formatWhole(player[this.layer].avolve)+"</h4>"):"" }],
         ["bar", "Avolve"], "blank",
         ["buyable", 11],
     ],

@@ -9,7 +9,7 @@ addLayer("b", {
     }},
     nodeStyle: { "min-width": "60px", height: "60px", "font-size": "30px", "padding-left": "15px", "padding-right": "15px" },
     color: "#3734ed",
-    resource: "B-Power", 
+    resource: "B能量", 
     baseResource: "n", 
     baseAmount() {return player.value}, 
     type: "custom",
@@ -33,7 +33,7 @@ addLayer("b", {
     canBuyMax() { return hasAchievement("goals", 74) },
     autoPrestige() { return false },
     resetsNothing() { return false },
-    tooltipLocked() { return "Req: n(t) ≥ "+formatWhole(tmp[this.layer].requires) },
+    tooltipLocked() { return "要求: n(t) ≥ "+formatWhole(tmp[this.layer].requires) },
     canReset() { return tmp[this.layer].getResetGain.gte(1) },
     getResetGain() { 
         let gain = tmp[this.layer].baseAmount.times(tmp[this.layer].reqDiv).div(tmp[this.layer].requires).max(1).log(tmp[this.layer].base).root(tmp[this.layer].exponent)
@@ -49,27 +49,27 @@ addLayer("b", {
         else return Decimal.pow(tmp[this.layer].base, amt.pow(tmp[this.layer].exponent)).times(tmp[this.layer].requires).div(tmp[this.layer].reqDiv)
     },
     prestigeButtonText() {
-        let text = "Reset for <b>"+formatWhole(tmp[this.layer].resetGain)+"</b> B-Power<br><br>";
-        if (tmp[this.layer].canBuyMax) text += "Next: n(t) ≥ "+format(tmp[this.layer].nextAtDisp)
-        else text += "Req: n(t) ≥ "+format(tmp[this.layer].getNextAt)
-        text += "<br>Req Base: "+format(tmp[this.layer].base)
-        text += "<br>Req Exponent: "+format(tmp[this.layer].exponent.plus(tmp[this.layer].costScalingInc.times(player[this.layer].points.sub(tmp[this.layer].costScalingStart)).max(0)))
+        let text = "重置以获得 <b>"+formatWhole(tmp[this.layer].resetGain)+"</b> B能量<br><br>";
+        if (tmp[this.layer].canBuyMax) text += "下一个B能量需要: n(t) ≥ "+format(tmp[this.layer].nextAtDisp)
+        else text += "要求: n(t) ≥ "+format(tmp[this.layer].getNextAt)
+        text += "<br>要求底数: "+format(tmp[this.layer].base)
+        text += "<br>要求指数: "+format(tmp[this.layer].exponent.plus(tmp[this.layer].costScalingInc.times(player[this.layer].points.sub(tmp[this.layer].costScalingStart)).max(0)))
         return text;
     },
     row: 0, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
-        {key: "b", description: "B: Reset for B-Power", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+        {key: "b", description: "B: 重置以获得B能量", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
     layerShown() { return tmp.goals.unlocks>=2 },
     tabFormat: [
         "main-display",
         "prestige-button",
-        ["display-text", function() { return (player[this.layer].points.gte(tmp[this.layer].costScalingStart))?("After "+formatWhole(tmp[this.layer].costScalingStart)+" B-Power, each B-Power increases its requirement exponent by "+format(tmp[this.layer].costScalingInc)):"" }],
+        ["display-text", function() { return (player[this.layer].points.gte(tmp[this.layer].costScalingStart))?("After "+formatWhole(tmp[this.layer].costScalingStart)+" B能量,每一个B能量都会使它的需求指数升高"+format(tmp[this.layer].costScalingInc)):"" }],
         "blank",
         ["display-text", function() { return "<h3>b("+formatWhole(player[this.layer].points)+") = "+format(player[this.layer].value)+"</h3>" }],
         ["display-text", function() { return "b(B) = "+tmp[this.layer].displayFormula }],
         "blank", "blank",
-        ["display-text", function() { return tmp[this.layer].batteriesUnl?("Batteries Used: "+formatWhole(tmp[this.layer].usedBatteries)+" / "+formatWhole(tmp[this.layer].batteryLimit)):"" }],
+        ["display-text", function() { return tmp[this.layer].batteriesUnl?("电池: "+formatWhole(tmp[this.layer].usedBatteries)+" / "+formatWhole(tmp[this.layer].batteryLimit)):"" }],
         "grid",
     ],
     displayFormula() {
@@ -92,15 +92,15 @@ addLayer("b", {
     },
     batteriesUnl() { return tmp.goals.unlocks>=3 },
     batteryEffectTypes: {
-        101: "Divides the costs of A-Power & B-Power",
-        102: "Multiplies B-Power's boost to effective A-Power",
-        103: "Divides the Avolve requirement",
-        201: "Multiplies n(t) & B<sub>101</sub>'s effect",
-        202: "Multiplies a(A) & B<sub>102</sub>'s effect",
-        203: "Multiplies B<sub>103</sub>'s effect & Makes the reward of &quot;Definitely a Bee Joke&quot; stronger & faster by ",
-        301: "Multiplies A-Power gain & B<sub>201</sub>'s effect",
-        302: "Multiplies Time Speed & B<sub>202</sub>'s effect",
-        303: "Reduces the Avolve requirement base & multiplies B<sub>203</sub>'s effect",
+        101: "降低A能量和B能量的价格",
+        102: "基于A能量倍增B能量效果",
+        103: "降低进化要求",
+        201: "倍增 n(t) & B<sub>101</sub> 的效果",
+        202: "倍增 a(A) & B<sub>102</sub> 的效果",
+        203: "倍增 B<sub>103</sub> 的效果 & 让 &quot;绝对是蜜蜂玩笑&quot; 成就的效果更强",
+        301: "倍增A能量获取 & B<sub>201</sub> 的效果",
+        302: "倍增时间速率 & B<sub>202</sub> 的效果",
+        303: "减少进化要求底数 & 倍增 B<sub>203</sub> 的效果",
     },
     batteryLimit() { 
         if (!tmp[this.layer].batteriesUnl) return 0;
@@ -131,10 +131,10 @@ addLayer("b", {
             return tmp[this.layer].batteriesUnl;
         },
         getTitle(data, id) {
-            return "B<sub>"+id+"</sub>: "+(data.gt(0)?"ON":"OFF")
+            return "B<sub>"+id+"</sub>: "+(data.gt(0)?"开":"关")
         },
         getDisplay(data, id) {
-            let ed = (id<((tmp.b.batteryRowsWithRewards+1)*100))?tmp[this.layer].batteryEffectTypes[id]:("Multiplies B<sub>"+(id-100)+"</sub>'s effect")
+            let ed = (id<((tmp.b.batteryRowsWithRewards+1)*100))?tmp[this.layer].batteryEffectTypes[id]:("倍增 B<sub>"+(id-100)+"</sub>的效果")
             let eff = gridEffect(this.layer, id);
             let display = ed+" by "+format(eff);
             return display;

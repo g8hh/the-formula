@@ -12,7 +12,7 @@ addLayer("c", {
     }},
     nodeStyle: { "min-width": "60px", height: "60px", "font-size": "30px", "padding-left": "15px", "padding-right": "15px" },
     color: "#0f9900",
-    resource: "C-Power", 
+    resource: "C能量", 
     baseResource: "n", 
     baseAmount() {return player.value}, 
     type: "custom",
@@ -35,7 +35,7 @@ addLayer("c", {
     canBuyMax() { return false },
     autoPrestige() { return false },
     resetsNothing() { return false },
-    tooltipLocked() { return "Req: n(t) ≥ "+formatWhole(tmp[this.layer].requires) },
+    tooltipLocked() { return "要求: n(t) ≥ "+formatWhole(tmp[this.layer].requires) },
     canReset() { return tmp[this.layer].getResetGain.gte(1) },
     getResetGain() { 
         let gain = tmp[this.layer].baseAmount.times(tmp[this.layer].reqDiv).div(tmp[this.layer].requires).max(1).log(tmp[this.layer].base).root(tmp[this.layer].exponent)
@@ -51,30 +51,30 @@ addLayer("c", {
         else return Decimal.pow(tmp[this.layer].base, amt.pow(tmp[this.layer].exponent)).times(tmp[this.layer].requires).div(tmp[this.layer].reqDiv)
     },
     prestigeButtonText() {
-        let text = "Reset for <b>"+formatWhole(tmp[this.layer].resetGain)+"</b> C-Power<br><br>";
-        if (tmp[this.layer].canBuyMax) text += "Next: n(t) ≥ "+format(tmp[this.layer].nextAtDisp)
-        else text += "Req: n(t) ≥ "+format(tmp[this.layer].getNextAt)
-        text += "<br>Req Base: "+format(tmp[this.layer].base)
-        text += "<br>Req Exponent: "+format(tmp[this.layer].exponent.plus(tmp[this.layer].costScalingInc.times(player[this.layer].points.sub(tmp[this.layer].costScalingStart)).max(0)))
+        let text = "重置以获得 <b>"+formatWhole(tmp[this.layer].resetGain)+"</b> C能量<br><br>";
+        if (tmp[this.layer].canBuyMax) text += "下一个C能量要求: n(t) ≥ "+format(tmp[this.layer].nextAtDisp)
+        else text += "要求: n(t) ≥ "+format(tmp[this.layer].getNextAt)
+        text += "<br>要求底数: "+format(tmp[this.layer].base)
+        text += "<br>要求指数: "+format(tmp[this.layer].exponent.plus(tmp[this.layer].costScalingInc.times(player[this.layer].points.sub(tmp[this.layer].costScalingStart)).max(0)))
         return text;
     },
     row: 0, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
-        {key: "c", description: "C: Reset for C-Power", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+        {key: "c", description: "C: 重置以获得C能量", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
     layerShown() { return tmp.goals.unlocks>=4 },
     tabFormat: [
         "main-display",
         "prestige-button",
-        ["display-text", function() { return (player[this.layer].points.gte(tmp[this.layer].costScalingStart))?("After "+formatWhole(tmp[this.layer].costScalingStart)+" C-Power, each C-Power increases its requirement exponent by "+format(tmp[this.layer].costScalingInc)):"" }],
+        ["display-text", function() { return (player[this.layer].points.gte(tmp[this.layer].costScalingStart))?("在 "+formatWhole(tmp[this.layer].costScalingStart)+" C能量之后, 每一个C能量会使其要求指数增加 "+format(tmp[this.layer].costScalingInc)):"" }],
         "blank",
         ["display-text", function() { return "<h3>c("+formatWhole(player[this.layer].points)+") = "+format(player[this.layer].value)+"</h3>" }],
         ["display-text", function() { return "c(C) = "+tmp[this.layer].displayFormula }],
         "blank", "blank",
         ["raw-html", function() { 
             return tmp.c.clockUnl?("<div class='digitalTime'>"+tmp.c.displayedTime+"</div><br><br>"
-            +"1 Day = "+(formatWhole(tmp.c.hoursPerDay.floor(), true)+":"+formatWhole(tmp.c.hoursPerDay.sub(tmp.c.hoursPerDay.floor()).times(60).floor(), true))+":00<br>"
-            +"Days Passed: "+format(player.c.loops)+', which multiply Time Speed by '+format(tmp.c.clockMult)+"x "+(hasAchievement("goals", 63)?"":"(decays over time)")
+            +"1 天 = "+(formatWhole(tmp.c.hoursPerDay.floor(), true)+":"+formatWhole(tmp.c.hoursPerDay.sub(tmp.c.hoursPerDay.floor()).times(60).floor(), true))+":00<br>"
+            +"已经过天数: "+format(player.c.loops)+', 倍增时间速率 '+format(tmp.c.clockMult)+"x "+(hasAchievement("goals", 63)?"":"(随时间递减)")
             ):"" 
         }],
     ],

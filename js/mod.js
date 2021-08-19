@@ -1,8 +1,8 @@
 let modInfo = {
-	name: "The Formula",
+	name: "The Formula(公式树)",
 	id: "formula_tree_game",
-	author: "Jacorb90",
-	pointsName: "time",
+	author: "Jacorb90 汉化by QwQe308",
+	pointsName: "时间",
 	modFiles: ["layers/a.js", "layers/b.js", "layers/c.js", "layers/goals.js", "layers/integration.js", "tree.js"],
 
 	discordName: "",
@@ -29,7 +29,7 @@ function displayFormula() {
 
 	f += " × a";
 	if (hasAchievement("goals", 45) && tmp.b.batteriesUnl) f += " × B<sub>201</sub>";
-	if (hasAchievement("goals", 15)) f += " × Goals";
+	if (hasAchievement("goals", 15)) f += " × 成就";
 	return f;
 }
 
@@ -51,7 +51,7 @@ function displayIntFormula() {
 
 	f += " × a";
 	if (hasAchievement("goals", 45) && tmp.b.batteriesUnl) f += " × B<sub>201</sub>";
-	if (hasAchievement("goals", 15)) f += " × Goals";
+	if (hasAchievement("goals", 15)) f += " × 成就";
 	f += " ÷ (IP - 1)!"
 	return f;
 }
@@ -87,26 +87,26 @@ function updateValue() {
 // Set your version in num and name
 let VERSION = {
 	num: "0.1.2",
-	name: "Integrate and Weep",
+	name: "集合",
 }
 
 let changelog = `<h1>Changelog:</h1><br><br>
-	<h3>v0.1.2 - Integrate and Weep</h3><br>
-		- Implemented Integration<br>
-		- Balanced up to 47 Goals completed<br>
+	<h3>v0.1.2 - 集合</h3><br>
+		- 开发了“集合”<br>
+		- 平衡到47成就<br>
 	<br><br>
-	<h3>v0.1.1 - More Letters, More Fun</h3><br>
-		- Implemented C-Power & The Clock<br>
-		- Balanced up to 36 Goals completed<br>
+	<h3>v0.1.1 - 更多字母, 更有趣的游戏</h3><br>
+		- 开发了C能量 & 钟<br>
+		- 平衡到36成就<br>
 	<br><br>
-	<h3>v0.1 - Learning Our Letters</h3><br>
-		- Set up basic stuff.<br>
-		- Implemented A-Power & Avolve<br>
-		- Implemented Goals<br>
-		- Implemented B-Power & Batteries<br>
-		- Balanced up to 19 Goals completed<br>`
+	<h3>v0.1 - 学习字母</h3><br>
+		- 创建基础内容.<br>
+		- 开发了A能量 & 进化<br>
+		- 开发了成就<br>
+		- 开发了B能量和电池<br>
+		- 平衡到19成就<br>`
 
-let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
+let winText = `恭喜! 你完成了这个游戏, 但是现在...`
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
@@ -137,10 +137,10 @@ function getTimeSpeed() {
 
 function getTimeSpeedFormula() {
 	let f = ""
-	if (hasAchievement("goals", 36)) f = '"Definitely a Bee Joke"'
+	if (hasAchievement("goals", 36)) f = '"绝对是蜜蜂笑话"'
 	if (hasAchievement("goals", 53)) f += " × B<sub>302</sub>"
-	if (tmp.c.clockUnl) f += (f.length>0?" × ":"")+"Days Effect"
-	if (hasAchievement("goals", 66)) f += (f.length>0?" × ":"")+"Goals"
+	if (tmp.c.clockUnl) f += (f.length>0?" × ":"")+"天数效果"
+	if (hasAchievement("goals", 66)) f += (f.length>0?" × ":"")+"成就"
 	else if (hasAchievement("goals", 62)) f += (f.length>0?" × ":"")+(hasAchievement("goals", 65)?"4":"2")
 	if (hasAchievement("goals", 72)) f += (f.length>0?" × ":"")+"IP"
 	return f;
@@ -168,7 +168,7 @@ function addedPlayerData() { return {
 var displayThings = [
 	function() {
 		if (tmp.timeSpeed.eq(1)) return;
-		else return "timespeed = "+getTimeSpeedFormula();
+		else return "时间速率(timespeed) = "+getTimeSpeedFormula();
 	}
 ]
 
